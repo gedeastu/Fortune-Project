@@ -1,0 +1,422 @@
+<?php
+include "../Conf/connect.php";
+session_start();
+
+$ID = $_GET['id'];
+// Get Money From Wallet Based on User's ID
+// Query untuk mengambil data dari tabel History berdasarkan ID User dan filter bulan dan tahun
+// $query = "SELECT * FROM history WHERE Id_Wallet IN (SELECT Id_Wallet FROM Wallet WHERE Email = (SELECT Email FROM User WHERE Id = '{$_SESSION['id']}')) AND MONTH(Date) = $currentMonth AND YEAR(Date) = $currentYear ORDER BY Id_History DESC";
+$takeHistory = mysqli_query($conn, "SELECT * FROM History WHERE Id_History = $ID");
+$history = mysqli_fetch_assoc($takeHistory);
+$takeCategory = mysqli_fetch_assoc(mysqli_query($conn, "SELECT c.Id_Category FROM Category c INNER JOIN Budget b ON c.Id_Category = b.Id_Category INNER JOIN History h ON b.Id_Budget = h.Id_Budget WHERE h.Id_History = $ID"));
+?>
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- icon title -->
+  <link rel="apple-touch-icon" type="image/png" href="../img/iconLogo.svg" />
+  <link rel="apple-touch-icon" type="image/png" sizes="76x76" href="img/iconLogo.svg" />
+  <link rel="apple-touch-icon" type="image/png" sizes="120x120" href="img/iconLogo.svg" />
+  <link rel="apple-touch-icon" type="image/png" sizes="152x152" href="img/iconLogo.svg" />
+  <link rel="apple-touch-icon" type="image/png" href="img/iconLogo.svg" sizes="60x60" />
+  <link rel="icon" type="image/png" href="../img/iconLogo.svg" />
+  <link rel="icon" type="image/png" href="../img/iconLogo.svg" sizes="32x32" />
+  <link rel="icon" type="image/png" href="../img/iconLogo.svg" sizes="192x192" />
+  <link rel="icon" type="image/png" href="../img/iconLogo.svg" sizes="16x16" />
+
+  <!-- aosJS -->
+  <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet" />
+  <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+
+  <!-- Flowbite -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/flowbite/1.6.4/flowbite.min.css" rel="stylesheet" />
+
+  <!-- daisyUI -->
+  <link href="https://cdn.jsdelivr.net/npm/daisyui@2.50.0/dist/full.css" rel="stylesheet" type="text/css" />
+
+  <!-- tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.tailwindcss.com?plugins=forms,typography,aspect-ratio,line-clamp"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {},
+        },
+      },
+    };
+  </script>
+  <!-- 
+    <style type="text/tailwindcss">
+        @layer utilities {
+          .content-auto {
+            content-visibility: auto;
+          }
+        }
+      </style>
+    -->
+
+  <!-- CSS Native -->
+  <link rel="stylesheet" href="io.css">
+
+  <!-- title -->
+  <title>Fortune - Income Edit</title>
+</head>
+
+<body class="">
+
+  <!-- Nav Bar -->
+  <div id="nav_float" class="z-10 fixed w-full bottom-0">
+    <div class="bg-[#36669a] bg-opacity-30 border border-white border-opacity-20 filter backdrop-blur-lg w-[26rem] h-16 mx-auto flex justify-evenly rounded-3xl m-10 shadow-md" id="nav_float">
+      <a href="../Index.php" class="flex active:scale-90 active:transition focus:bg-[#3F49A6]/20 focus:w-max focus:h-full focus:rounded-lg focus:shadow-md focus:border focus:border-white/20 focus:p-[0.8rem]">
+        <img src="../img/Home.svg" alt="" class="w-6 my-auto" />
+      </a>
+      <a href="../statistic/AccountAnalyst.php?date=<?php $date = date('m'); echo $date ?>" class="flex active:scale-90 active:transition focus:bg-[#3F49A6]/20 focus:w-max focus:h-full focus:rounded-lg focus:shadow-md focus:border focus:border-white/20 focus:p-[0.8rem]">
+        <img src="../img/Vector.svg" alt="" class="w-6 my-auto" />
+      </a>
+      <div id="add">
+        <a href="#" tabindex="0" class="flex items-center w-max h-full bg-[#3F49A6]/20 shadow-md border border-white/20 p-[0.8rem] rounded-lg">
+          <img src="../img/add.svg" alt="" class="w-max" />
+        </a>
+      </div>
+      <a href="../Budget/Budget.php?date=<?php $date = date('m'); echo $date ?>" class="flex items-center active:scale-90 active:transition focus:bg-[#3F49A6]/20 focus:w-max focus:h-full focus:rounded-lg focus:shadow-md focus:border focus:border-white/20 focus:p-[0.8rem]">
+        <img src="../img/dollar.svg" alt="" class="w-6 my-auto" />
+      </a>
+      <a href="../user/profile.php" class="flex active:scale-90 active:transition focus:bg-[#3F49A6]/20 focus:w-max focus:h-full focus:rounded-lg focus:shadow-md focus:border focus:border-white/20 focus:p-[0.8rem]">
+        <img src="../img/profile.svg" alt="" class="w-6 my-auto" />
+      </a>
+    </div>
+  </div>
+  <!-- Nav Bar -->
+
+  <div class="container max-w-full md:h-[100vh] bg-gradient-to-t to-[#2E3462] from-[#292E53]/100">
+    <div class="backdrop-blur-[13rem] h-full backdrop-filter py-5 relative md:flex">
+      <!-- container_login -->
+      <div id="container_income" class="max-w-[26em] md:my-auto md:max-w-max md:scale-110 border-opacity-10 border-white border-2 bg-gradient-to-tl to-[#B5B780]/20 from-[#8A98E2]/10 bg-opacity-10 rounded-2xl mx-auto sm:max-w-lg shadow-lg my-10 px-7">
+        <div id="header" class="py-5 w-full md:h-full flex">
+          <div id="title_income" class="text-2xl text-white font-bold mx-auto w-full">
+            <h1 class="self-center text-center w-full">Income - Edit</h1>
+          </div>
+          <label for="delete" class="self-last" data-tippy-content="Delete">
+            <svg xmlns="http://www.w3.org/2000/svg" class="fill-white" height="1.5em" viewBox="0 0 448 512"><!--! Font Awesome Free 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. -->
+              <path d="M135.2 17.7C140.6 6.8 151.7 0 163.8 0H284.2c12.1 0 23.2 6.8 28.6 17.7L320 32h96c17.7 0 32 14.3 32 32s-14.3 32-32 32H32C14.3 96 0 81.7 0 64S14.3 32 32 32h96l7.2-14.3zM32 128H416V448c0 35.3-28.7 64-64 64H96c-35.3 0-64-28.7-64-64V128zm96 64c-8.8 0-16 7.2-16 16V432c0 8.8 7.2 16 16 16s16-7.2 16-16V208c0-8.8-7.2-16-16-16zm96 0c-8.8 0-16 7.2-16 16V432c0 8.8 7.2 16 16 16s16-7.2 16-16V208c0-8.8-7.2-16-16-16zm96 0c-8.8 0-16 7.2-16 16V432c0 8.8 7.2 16 16 16s16-7.2 16-16V208c0-8.8-7.2-16-16-16z" />
+            </svg>
+          </label>
+        </div>
+        <div id="field_income" class="mt-5 max-w-3xl order-start">
+          <div id="responsive_income" class="md:grid-cols-2 md:grid md:h-full md:relative md:items-center md:gap-5">
+            <div id="responsive1" class="md:w-full md:h-96">
+              <!-- Form Start- -->
+              <form action="Edit/Income.php?id=<?php echo $ID ?>" method="post">
+                <!-- Title Income -->
+                <div id="Title" class="bg-white bg-opacity-10 mx-auto rounded-xl">
+                  <div class="flex justify-around items-center justify-items-stretch relative">
+                    <label for="field_title" class="my-auto py-3 text-white w-full absolute pl-5" data-tippy-content="Input Your Title">Title :</label>
+                    <input name="Title" id="field_title" type="text" class="bg-transparent text-white rounded-full border-none w-2/3 focus:ring-0" value="<?php echo $history["Title"] ?>" />
+                  </div>
+                </div>
+                <!-- Title Income END -->
+
+                <!-- Amount Field -->
+                <div id="Rp" class="bg-white bg-opacity-10 mx-auto rounded-xl h-10 my-3">
+                  <div class="flex justify-around items-center justify-items-stretch relative">
+                    <label for="field_rp" class="md:py-0 text-white w-full absolute pl-5" data-tippy-content="Input Your Budget">Rp.</label>
+                    <input name="Ammount" oninput="formatMoney(this)" id="field_rp" type="text" class="bg-transparent text-white rounded-full border-none w-2/3 focus:ring-0" value="<?php echo number_format($history["Amount"]) ?>" />
+                    <script>
+                      function formatMoney(element) {
+                        // Ambil nilai input
+                        let value = element.value;
+
+                        // Hilangkan semua karakter selain angka
+                        value = value.replace(/\D/g, '');
+
+                        // Konversi ke tipe data number
+                        let numericValue = Number(value);
+
+                        // Format dengan menambahkan koma setiap 3 digit
+                        let formattedValue = numericValue.toLocaleString();
+
+                        // Setel nilai kembali ke input
+                        element.value = formattedValue;
+                      }
+                    </script>
+                  </div>
+                </div>
+                <!-- Amount Field END-->
+
+                
+                <!-- Categoty List -->
+                <div id="Category" class="w-full relative bg-white/10 rounded-xl pb-3">
+                  <div id="titleCategory" class="h-max text-white">
+                    <h3 class="h-full font-semibold w-max mx-auto py-2">Category</h3>
+                  </div>
+                  
+
+                  <!-- Scroll Point -->
+                  <div id="trackCategory" class="mx-5 border border-white/20 h-28 overflow-y-auto relative shadow-inner rounded-lg">
+
+                    <!-- List 01-->
+                    <div id="category_01" class="flex w-full">
+
+                    <div id="award_category" class="flex w-full overflow-hidden shift-away">
+                      <input name="Category" value="1" id="award" type="radio" class="hidden" <?php if ($takeCategory["Id_Category"] == '1') {echo "checked";} ?>>
+                      <label for="award" class="cursor-pointer flex w-full p-3 bg-white/25 text-white border border-white/10 overflow-hidden" data-tippy-content="Salary">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-10 fill-current m-auto" viewBox="0 0 512 512">
+                          <path
+                            d="M64 32C28.7 32 0 60.7 0 96V416c0 35.3 28.7 64 64 64H448c35.3 0 64-28.7 64-64V192c0-35.3-28.7-64-64-64H80c-8.8 0-16-7.2-16-16s7.2-16 16-16H448c17.7 0 32-14.3 32-32s-14.3-32-32-32H64zM416 272a32 32 0 1 1 0 64 32 32 0 1 1 0-64z" />
+                        </svg>
+                      </label>
+                    </div>
+
+                    <div id="coupon_category" class="flex w-full overflow-hidden">
+                      <input name="Category" value="2" id="coupon" type="radio" class="hidden" <?php if ($takeCategory["Id_Category"] == '2') {echo "checked";} ?>>
+                      <label for="coupon" class="cursor-pointer flex w-full p-3 bg-white/25 text-white border border-white/10 overflow-hidden" data-tippy-content="Internet Activity">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-11 fill-current m-auto" viewBox="0 0 576 512">
+                          <path
+                            d="M547.6 103.8L490.3 13.1C485.2 5 476.1 0 466.4 0H109.6C99.9 0 90.8 5 85.7 13.1L28.3 103.8c-29.6 46.8-3.4 111.9 51.9 119.4c4 .5 8.1 .8 12.1 .8c26.1 0 49.3-11.4 65.2-29c15.9 17.6 39.1 29 65.2 29c26.1 0 49.3-11.4 65.2-29c15.9 17.6 39.1 29 65.2 29c26.2 0 49.3-11.4 65.2-29c16 17.6 39.1 29 65.2 29c4.1 0 8.1-.3 12.1-.8c55.5-7.4 81.8-72.5 52.1-119.4zM499.7 254.9l-.1 0c-5.3 .7-10.7 1.1-16.2 1.1c-12.4 0-24.3-1.9-35.4-5.3V384H128V250.6c-11.2 3.5-23.2 5.4-35.6 5.4c-5.5 0-11-.4-16.3-1.1l-.1 0c-4.1-.6-8.1-1.3-12-2.3V384v64c0 35.3 28.7 64 64 64H448c35.3 0 64-28.7 64-64V384 252.6c-4 1-8 1.8-12.3 2.3z" />
+                        </svg>
+                      </label>
+                    </div>
+
+                    <div id="family_category" class="flex w-full overflow-hidden">
+                      <input name="Category" value="3" id="family" type="radio" class="hidden" <?php if ($takeCategory["Id_Category"] == '3') {echo "checked";} ?>>
+                      <label for="family" class="cursor-pointer flex w-full p-3 bg-white/25 text-white border border-white/10 overflow-hidden" data-tippy-content="Award">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-10 fill-current m-auto" viewBox="0 0 384 512">
+                          <path
+                            d="M173.8 5.5c11-7.3 25.4-7.3 36.4 0L228 17.2c6 3.9 13 5.8 20.1 5.4l21.3-1.3c13.2-.8 25.6 6.4 31.5 18.2l9.6 19.1c3.2 6.4 8.4 11.5 14.7 14.7L344.5 83c11.8 5.9 19 18.3 18.2 31.5l-1.3 21.3c-.4 7.1 1.5 14.2 5.4 20.1l11.8 17.8c7.3 11 7.3 25.4 0 36.4L366.8 228c-3.9 6-5.8 13-5.4 20.1l1.3 21.3c.8 13.2-6.4 25.6-18.2 31.5l-19.1 9.6c-6.4 3.2-11.5 8.4-14.7 14.7L301 344.5c-5.9 11.8-18.3 19-31.5 18.2l-21.3-1.3c-7.1-.4-14.2 1.5-20.1 5.4l-17.8 11.8c-11 7.3-25.4 7.3-36.4 0L156 366.8c-6-3.9-13-5.8-20.1-5.4l-21.3 1.3c-13.2 .8-25.6-6.4-31.5-18.2l-9.6-19.1c-3.2-6.4-8.4-11.5-14.7-14.7L39.5 301c-11.8-5.9-19-18.3-18.2-31.5l1.3-21.3c.4-7.1-1.5-14.2-5.4-20.1L5.5 210.2c-7.3-11-7.3-25.4 0-36.4L17.2 156c3.9-6 5.8-13 5.4-20.1l-1.3-21.3c-.8-13.2 6.4-25.6 18.2-31.5l19.1-9.6C65 70.2 70.2 65 73.4 58.6L83 39.5c5.9-11.8 18.3-19 31.5-18.2l21.3 1.3c7.1 .4 14.2-1.5 20.1-5.4L173.8 5.5zM272 192a80 80 0 1 0 -160 0 80 80 0 1 0 160 0zM1.3 441.8L44.4 339.3c.2 .1 .3 .2 .4 .4l9.6 19.1c11.7 23.2 36 37.3 62 35.8l21.3-1.3c.2 0 .5 0 .7 .2l17.8 11.8c5.1 3.3 10.5 5.9 16.1 7.7l-37.6 89.3c-2.3 5.5-7.4 9.2-13.3 9.7s-11.6-2.2-14.8-7.2L74.4 455.5l-56.1 8.3c-5.7 .8-11.4-1.5-15-6s-4.3-10.7-2.1-16zm248 60.4L211.7 413c5.6-1.8 11-4.3 16.1-7.7l17.8-11.8c.2-.1 .4-.2 .7-.2l21.3 1.3c26 1.5 50.3-12.6 62-35.8l9.6-19.1c.1-.2 .2-.3 .4-.4l43.2 102.5c2.2 5.3 1.4 11.4-2.1 16s-9.3 6.9-15 6l-56.1-8.3-32.2 49.2c-3.2 5-8.9 7.7-14.8 7.2s-11-4.3-13.3-9.7z" />
+                        </svg>
+                      </label>
+                    </div>
+
+                    <div id="salary_category" class="flex w-full overflow-hidden">
+                      <input name="Category" value="4" id="salary" type="radio" class="hidden" <?php if ($takeCategory["Id_Category"] == '4') {echo "checked";} ?>>
+                      <label for="salary" class="cursor-pointer flex w-full p-3 bg-white/25 text-white border border-white/10 overflow-hidden" data-tippy-content="Coupon">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-8 fill-current m-auto" viewBox="0 0 384 512">
+                          <path
+                            d="M14 2.2C22.5-1.7 32.5-.3 39.6 5.8L80 40.4 120.4 5.8c9-7.7 22.3-7.7 31.2 0L192 40.4 232.4 5.8c9-7.7 22.3-7.7 31.2 0L304 40.4 344.4 5.8c7.1-6.1 17.1-7.5 25.6-3.6s14 12.4 14 21.8V488c0 9.4-5.5 17.9-14 21.8s-18.5 2.5-25.6-3.6L304 471.6l-40.4 34.6c-9 7.7-22.3 7.7-31.2 0L192 471.6l-40.4 34.6c-9 7.7-22.3 7.7-31.2 0L80 471.6 39.6 506.2c-7.1 6.1-17.1 7.5-25.6 3.6S0 497.4 0 488V24C0 14.6 5.5 6.1 14 2.2zM96 144c-8.8 0-16 7.2-16 16s7.2 16 16 16H288c8.8 0 16-7.2 16-16s-7.2-16-16-16H96zM80 352c0 8.8 7.2 16 16 16H288c8.8 0 16-7.2 16-16s-7.2-16-16-16H96c-8.8 0-16 7.2-16 16zM96 240c-8.8 0-16 7.2-16 16s7.2 16 16 16H288c8.8 0 16-7.2 16-16s-7.2-16-16-16H96z" />
+                        </svg>
+                      </label>
+                    </div>
+                    
+                    
+
+                    </div>
+                    <!-- END List 01-->
+
+                    <!-- List 02-->
+                    <div id="category_02" class="flex w-full ">
+
+                      <div id="edu_category" class="flex w-1/4 overflow-hidden">
+                        <input type="radio" name="Category" value="5" class="hidden" id="edu" <?php if ($takeCategory["Id_Category"] == '5') {echo "checked";} ?>>
+                        <label for="edu" class="cursor-pointer flex w-full p-3 bg-white/25 text-white border border-white/10 overflow-hidden" data-tippy-content="Gamble">
+                          <svg xmlns="http://www.w3.org/2000/svg" class="w-14 fill-current m-auto" viewBox="0 0 640 512">
+                            <path
+                              d="M274.9 34.3c-28.1-28.1-73.7-28.1-101.8 0L34.3 173.1c-28.1 28.1-28.1 73.7 0 101.8L173.1 413.7c28.1 28.1 73.7 28.1 101.8 0L413.7 274.9c28.1-28.1 28.1-73.7 0-101.8L274.9 34.3zM200 224a24 24 0 1 1 48 0 24 24 0 1 1 -48 0zM96 200a24 24 0 1 1 0 48 24 24 0 1 1 0-48zM224 376a24 24 0 1 1 0-48 24 24 0 1 1 0 48zM352 200a24 24 0 1 1 0 48 24 24 0 1 1 0-48zM224 120a24 24 0 1 1 0-48 24 24 0 1 1 0 48zm96 328c0 35.3 28.7 64 64 64H576c35.3 0 64-28.7 64-64V256c0-35.3-28.7-64-64-64H461.7c11.6 36 3.1 77-25.4 105.5L320 413.8V448zM480 328a24 24 0 1 1 0 48 24 24 0 1 1 0-48z" />
+                          </svg>
+                        </label>
+                      </div>
+
+                      <div id="transaction_category" class="flex w-1/4 overflow-hidden">
+                        <input type="radio" name="Category" value="6" class="hidden" id="transaction" <?php if ($takeCategory["Id_Category"] == '6') {echo "checked";} ?>>
+                        <label for="transaction" class="cursor-pointer flex w-full p-3 bg-white/25 text-white border border-white/10 overflow-hidden" data-tippy-content="Investment">
+                          <svg xmlns="http://www.w3.org/2000/svg" class="w-10 fill-current m-auto" viewBox="0 0 448 512">
+                            <path
+                              d="M160 80c0-26.5 21.5-48 48-48h32c26.5 0 48 21.5 48 48V432c0 26.5-21.5 48-48 48H208c-26.5 0-48-21.5-48-48V80zM0 272c0-26.5 21.5-48 48-48H80c26.5 0 48 21.5 48 48V432c0 26.5-21.5 48-48 48H48c-26.5 0-48-21.5-48-48V272zM368 96h32c26.5 0 48 21.5 48 48V432c0 26.5-21.5 48-48 48H368c-26.5 0-48-21.5-48-48V144c0-26.5 21.5-48 48-48z" />
+                          </svg>
+                        </label>
+                      </div>
+                    </div>
+                    <!-- END List 02-->
+
+                    <!-- List 03-->
+                    <!-- <div id="category_03" class="flex w-1/2">
+
+                      <div id="entertaiment_category" class="flex w-full overflow-hidden">
+                        <input type="radio" name="radio" class="hidden" id="entertaiment">
+                        <label for="entertaiment" class="cursor-pointer flex w-full p-3 bg-white/25 text-white border border-white/10 overflow-hidden">
+                          <svg xmlns="http://www.w3.org/2000/svg" class="w-10 fill-current m-auto" viewBox="0 0 512 512"><path d="M57.7 193l9.4 16.4c8.3 14.5 21.9 25.2 38 29.8L163 255.7c17.2 4.9 29 20.6 29 38.5v39.9c0 11 6.2 21 16 25.9s16 14.9 16 25.9v39c0 15.6 14.9 26.9 29.9 22.6c16.1-4.6 28.6-17.5 32.7-33.8l2.8-11.2c4.2-16.9 15.2-31.4 30.3-40l8.1-4.6c15-8.5 24.2-24.5 24.2-41.7v-8.3c0-12.7-5.1-24.9-14.1-33.9l-3.9-3.9c-9-9-21.2-14.1-33.9-14.1H257c-11.1 0-22.1-2.9-31.8-8.4l-34.5-19.7c-4.3-2.5-7.6-6.5-9.2-11.2c-3.2-9.6 1.1-20 10.2-24.5l5.9-3c6.6-3.3 14.3-3.9 21.3-1.5l23.2 7.7c8.2 2.7 17.2-.4 21.9-7.5c4.7-7 4.2-16.3-1.2-22.8l-13.6-16.3c-10-12-9.9-29.5 .3-41.3l15.7-18.3c8.8-10.3 10.2-25 3.5-36.7l-2.4-4.2c-3.5-.2-6.9-.3-10.4-.3C163.1 48 84.4 108.9 57.7 193zM464 256c0-36.8-9.6-71.4-26.4-101.5L412 164.8c-15.7 6.3-23.8 23.8-18.5 39.8l16.9 50.7c3.5 10.4 12 18.3 22.6 20.9l29.1 7.3c1.2-9 1.8-18.2 1.8-27.5zM0 256a256 256 0 1 1 512 0A256 256 0 1 1 0 256z"/></svg>
+                        </label>
+                      </div>
+
+                      <div id="game_category" class="flex w-full overflow-hidden">
+                        <input type="radio" name="radio" class="hidden" id="game">
+                        <label for="game" class="cursor-pointer flex w-full p-3 bg-white/25 text-white border border-white/10 overflow-hidden">
+                          <svg xmlns="http://www.w3.org/2000/svg" class="w-10 fill-current m-auto" viewBox="0 0 640 512"><path d="M192 64C86 64 0 150 0 256S86 448 192 448H448c106 0 192-86 192-192s-86-192-192-192H192zM496 168a40 40 0 1 1 0 80 40 40 0 1 1 0-80zM392 304a40 40 0 1 1 80 0 40 40 0 1 1 -80 0zM168 200c0-13.3 10.7-24 24-24s24 10.7 24 24v32h32c13.3 0 24 10.7 24 24s-10.7 24-24 24H216v32c0 13.3-10.7 24-24 24s-24-10.7-24-24V280H136c-13.3 0-24-10.7-24-24s10.7-24 24-24h32V200z"/></svg>
+                        </label>
+                      </div>
+                      
+                    </div> -->
+                    <!-- END List 03-->
+
+                  </div>
+                  <!-- Scroll Point END-->
+
+
+                </div>
+                <!-- Categoty List END -->
+
+
+                <div id="AccDate" class="flex justify-between pt-3 md:pb-1 pb-3  gap-2.5">
+
+                  <!-- Acc List -->
+                  <div id="Account" class="w-52 relative bg-white/10 rounded-xl pb-3">
+                    <div id="titleAccount" class="h-max text-white">
+                      <h3 class="h-full font-semibold w-max mx-auto py-0.5">Account</h3>
+                    </div>
+
+                    <!-- Scroll Point -->
+                    <div id="trackAccount" class="border border-white/10 mx-2 h-12 overflow-auto relative shadow-inner rounded-lg">
+
+                      <!-- List 1 -->
+                      <div id="category_01" class="flex w-full overflow-hidden">
+
+                        <div id="assets_category" class="flex w-full overflow-hidden">
+                          <input type="radio" value="ATM" name="acc" class="hidden" id="assets" checked>
+                          <label for="assets" class="cursor-pointer flex w-full p-3 bg-white/25 text-white border border-white/10 overflow-hidden" data-tippy-content="Assets">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 fill-current m-auto" viewBox="0 0 384 512">
+                              <path d="M64 0C28.7 0 0 28.7 0 64V448c0 35.3 28.7 64 64 64H320c35.3 0 64-28.7 64-64V160H256c-17.7 0-32-14.3-32-32V0H64zM256 0V128H384L256 0zM64 80c0-8.8 7.2-16 16-16h64c8.8 0 16 7.2 16 16s-7.2 16-16 16H80c-8.8 0-16-7.2-16-16zm0 64c0-8.8 7.2-16 16-16h64c8.8 0 16 7.2 16 16s-7.2 16-16 16H80c-8.8 0-16-7.2-16-16zm128 72c8.8 0 16 7.2 16 16v17.3c8.5 1.2 16.7 3.1 24.1 5.1c8.5 2.3 13.6 11 11.3 19.6s-11 13.6-19.6 11.3c-11.1-3-22-5.2-32.1-5.3c-8.4-.1-17.4 1.8-23.6 5.5c-5.7 3.4-8.1 7.3-8.1 12.8c0 3.7 1.3 6.5 7.3 10.1c6.9 4.1 16.6 7.1 29.2 10.9l.5 .1 0 0 0 0c11.3 3.4 25.3 7.6 36.3 14.6c12.1 7.6 22.4 19.7 22.7 38.2c.3 19.3-9.6 33.3-22.9 41.6c-7.7 4.8-16.4 7.6-25.1 9.1V440c0 8.8-7.2 16-16 16s-16-7.2-16-16V422.2c-11.2-2.1-21.7-5.7-30.9-8.9l0 0c-2.1-.7-4.2-1.4-6.2-2.1c-8.4-2.8-12.9-11.9-10.1-20.2s11.9-12.9 20.2-10.1c2.5 .8 4.8 1.6 7.1 2.4l0 0 0 0 0 0c13.6 4.6 24.6 8.4 36.3 8.7c9.1 .3 17.9-1.7 23.7-5.3c5.1-3.2 7.9-7.3 7.8-14c-.1-4.6-1.8-7.8-7.7-11.6c-6.8-4.3-16.5-7.4-29-11.2l-1.6-.5 0 0c-11-3.3-24.3-7.3-34.8-13.7c-12-7.2-22.6-18.9-22.7-37.3c-.1-19.4 10.8-32.8 23.8-40.5c7.5-4.4 15.8-7.2 24.1-8.7V232c0-8.8 7.2-16 16-16z" />
+                            </svg>
+                          </label>
+                        </div>
+
+                        <div id="expenses_category" class="flex w-full overflow-hidden">
+                          <input type="radio" value="Pockets" name="acc" class="hidden" id="expenses" disabled>
+                          <label for="expenses" class="cursor-pointer flex w-full p-3 bg-white/25 text-white border border-white/10 overflow-hidden" data-tippy-content="Disabled">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 fill-current m-auto" viewBox="0 0 512 512">
+                              <path d="M512 80c0 18-14.3 34.6-38.4 48c-29.1 16.1-72.5 27.5-122.3 30.9c-3.7-1.8-7.4-3.5-11.3-5C300.6 137.4 248.2 128 192 128c-8.3 0-16.4 .2-24.5 .6l-1.1-.6C142.3 114.6 128 98 128 80c0-44.2 86-80 192-80S512 35.8 512 80zM160.7 161.1c10.2-.7 20.7-1.1 31.3-1.1c62.2 0 117.4 12.3 152.5 31.4C369.3 204.9 384 221.7 384 240c0 4-.7 7.9-2.1 11.7c-4.6 13.2-17 25.3-35 35.5c0 0 0 0 0 0c-.1 .1-.3 .1-.4 .2l0 0 0 0c-.3 .2-.6 .3-.9 .5c-35 19.4-90.8 32-153.6 32c-59.6 0-112.9-11.3-148.2-29.1c-1.9-.9-3.7-1.9-5.5-2.9C14.3 274.6 0 258 0 240c0-34.8 53.4-64.5 128-75.4c10.5-1.5 21.4-2.7 32.7-3.5zM416 240c0-21.9-10.6-39.9-24.1-53.4c28.3-4.4 54.2-11.4 76.2-20.5c16.3-6.8 31.5-15.2 43.9-25.5V176c0 19.3-16.5 37.1-43.8 50.9c-14.6 7.4-32.4 13.7-52.4 18.5c.1-1.8 .2-3.5 .2-5.3zm-32 96c0 18-14.3 34.6-38.4 48c-1.8 1-3.6 1.9-5.5 2.9C304.9 404.7 251.6 416 192 416c-62.8 0-118.6-12.6-153.6-32C14.3 370.6 0 354 0 336V300.6c12.5 10.3 27.6 18.7 43.9 25.5C83.4 342.6 135.8 352 192 352s108.6-9.4 148.1-25.9c7.8-3.2 15.3-6.9 22.4-10.9c6.1-3.4 11.8-7.2 17.2-11.2c1.5-1.1 2.9-2.3 4.3-3.4V304v5.7V336zm32 0V304 278.1c19-4.2 36.5-9.5 52.1-16c16.3-6.8 31.5-15.2 43.9-25.5V272c0 10.5-5 21-14.9 30.9c-16.3 16.3-45 29.7-81.3 38.4c.1-1.7 .2-3.5 .2-5.3zM192 448c56.2 0 108.6-9.4 148.1-25.9c16.3-6.8 31.5-15.2 43.9-25.5V432c0 44.2-86 80-192 80S0 476.2 0 432V396.6c12.5 10.3 27.6 18.7 43.9 25.5C83.4 438.6 135.8 448 192 448z" />
+                            </svg>
+                          </label>
+                        </div>
+
+                        <div id="liabilities_category" class="flex w-full overflow-hidden">
+                          <input type="radio" value="Other" name="acc" class="hidden" id="liabilities" disabled>
+                          <label for="liabilities" class="cursor-pointer flex w-full p-3 bg-white/25 text-white border border-white/10 overflow-hidden" data-tippy-content="Disabled">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-10 fill-current m-auto" viewBox="0 0 512 512">
+                              <path d="M320 96H192L144.6 24.9C137.5 14.2 145.1 0 157.9 0H354.1c12.8 0 20.4 14.2 13.3 24.9L320 96zM192 128H320c3.8 2.5 8.1 5.3 13 8.4C389.7 172.7 512 250.9 512 416c0 53-43 96-96 96H96c-53 0-96-43-96-96C0 250.9 122.3 172.7 179 136.4l0 0 0 0c4.8-3.1 9.2-5.9 13-8.4zm84 88c0-11-9-20-20-20s-20 9-20 20v14c-7.6 1.7-15.2 4.4-22.2 8.5c-13.9 8.3-25.9 22.8-25.8 43.9c.1 20.3 12 33.1 24.7 40.7c11 6.6 24.7 10.8 35.6 14l1.7 .5c12.6 3.8 21.8 6.8 28 10.7c5.1 3.2 5.8 5.4 5.9 8.2c.1 5-1.8 8-5.9 10.5c-5 3.1-12.9 5-21.4 4.7c-11.1-.4-21.5-3.9-35.1-8.5c-2.3-.8-4.7-1.6-7.2-2.4c-10.5-3.5-21.8 2.2-25.3 12.6s2.2 21.8 12.6 25.3c1.9 .6 4 1.3 6.1 2.1l0 0 0 0c8.3 2.9 17.9 6.2 28.2 8.4V424c0 11 9 20 20 20s20-9 20-20V410.2c8-1.7 16-4.5 23.2-9c14.3-8.9 25.1-24.1 24.8-45c-.3-20.3-11.7-33.4-24.6-41.6c-11.5-7.2-25.9-11.6-37.1-15l0 0-.7-.2c-12.8-3.9-21.9-6.7-28.3-10.5c-5.2-3.1-5.3-4.9-5.3-6.7c0-3.7 1.4-6.5 6.2-9.3c5.4-3.2 13.6-5.1 21.5-5c9.6 .1 20.2 2.2 31.2 5.2c10.7 2.8 21.6-3.5 24.5-14.2s-3.5-21.6-14.2-24.5c-6.5-1.7-13.7-3.4-21.1-4.7V216z" />
+                            </svg>
+                          </label>
+                        </div>
+
+                      </div>
+
+                      <!-- List 2 -->
+                      <!-- <div id="category_02" class="flex w-2/3 overflow-hidden">
+
+                    <div id="equity_category" class="flex w-full overflow-hidden">
+
+                    <input type="radio" name="radio2nd" class="hidden" id="equity">
+                    <label for="equity" class="cursor-pointer flex w-full p-3 bg-white/25 text-white border border-white/10 overflow-hidden">
+                      <svg xmlns="http://www.w3.org/2000/svg" class="w-10 fill-current m-auto" viewBox="0 0 512 512"><path d="M320 96H192L144.6 24.9C137.5 14.2 145.1 0 157.9 0H354.1c12.8 0 20.4 14.2 13.3 24.9L320 96zM192 128H320c3.8 2.5 8.1 5.3 13 8.4C389.7 172.7 512 250.9 512 416c0 53-43 96-96 96H96c-53 0-96-43-96-96C0 250.9 122.3 172.7 179 136.4l0 0 0 0c4.8-3.1 9.2-5.9 13-8.4zm84 88c0-11-9-20-20-20s-20 9-20 20v14c-7.6 1.7-15.2 4.4-22.2 8.5c-13.9 8.3-25.9 22.8-25.8 43.9c.1 20.3 12 33.1 24.7 40.7c11 6.6 24.7 10.8 35.6 14l1.7 .5c12.6 3.8 21.8 6.8 28 10.7c5.1 3.2 5.8 5.4 5.9 8.2c.1 5-1.8 8-5.9 10.5c-5 3.1-12.9 5-21.4 4.7c-11.1-.4-21.5-3.9-35.1-8.5c-2.3-.8-4.7-1.6-7.2-2.4c-10.5-3.5-21.8 2.2-25.3 12.6s2.2 21.8 12.6 25.3c1.9 .6 4 1.3 6.1 2.1l0 0 0 0c8.3 2.9 17.9 6.2 28.2 8.4V424c0 11 9 20 20 20s20-9 20-20V410.2c8-1.7 16-4.5 23.2-9c14.3-8.9 25.1-24.1 24.8-45c-.3-20.3-11.7-33.4-24.6-41.6c-11.5-7.2-25.9-11.6-37.1-15l0 0-.7-.2c-12.8-3.9-21.9-6.7-28.3-10.5c-5.2-3.1-5.3-4.9-5.3-6.7c0-3.7 1.4-6.5 6.2-9.3c5.4-3.2 13.6-5.1 21.5-5c9.6 .1 20.2 2.2 31.2 5.2c10.7 2.8 21.6-3.5 24.5-14.2s-3.5-21.6-14.2-24.5c-6.5-1.7-13.7-3.4-21.1-4.7V216z"/></svg>
+                    </label>
+                    </div>
+                    <div id="revenue_category" class="flex w-full overflow-hidden">
+                      <input type="radio" name="radio2nd" class="hidden" id="revenue">
+                      <label for="revenue" class="cursor-pointer flex w-full p-3 bg-white/25 text-white border border-white/10 overflow-hidden">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-max fill-current m-auto" viewBox="0 0 512 512"><path d="M320 96H192L144.6 24.9C137.5 14.2 145.1 0 157.9 0H354.1c12.8 0 20.4 14.2 13.3 24.9L320 96zM192 128H320c3.8 2.5 8.1 5.3 13 8.4C389.7 172.7 512 250.9 512 416c0 53-43 96-96 96H96c-53 0-96-43-96-96C0 250.9 122.3 172.7 179 136.4l0 0 0 0c4.8-3.1 9.2-5.9 13-8.4zm84 88c0-11-9-20-20-20s-20 9-20 20v14c-7.6 1.7-15.2 4.4-22.2 8.5c-13.9 8.3-25.9 22.8-25.8 43.9c.1 20.3 12 33.1 24.7 40.7c11 6.6 24.7 10.8 35.6 14l1.7 .5c12.6 3.8 21.8 6.8 28 10.7c5.1 3.2 5.8 5.4 5.9 8.2c.1 5-1.8 8-5.9 10.5c-5 3.1-12.9 5-21.4 4.7c-11.1-.4-21.5-3.9-35.1-8.5c-2.3-.8-4.7-1.6-7.2-2.4c-10.5-3.5-21.8 2.2-25.3 12.6s2.2 21.8 12.6 25.3c1.9 .6 4 1.3 6.1 2.1l0 0 0 0c8.3 2.9 17.9 6.2 28.2 8.4V424c0 11 9 20 20 20s20-9 20-20V410.2c8-1.7 16-4.5 23.2-9c14.3-8.9 25.1-24.1 24.8-45c-.3-20.3-11.7-33.4-24.6-41.6c-11.5-7.2-25.9-11.6-37.1-15l0 0-.7-.2c-12.8-3.9-21.9-6.7-28.3-10.5c-5.2-3.1-5.3-4.9-5.3-6.7c0-3.7 1.4-6.5 6.2-9.3c5.4-3.2 13.6-5.1 21.5-5c9.6 .1 20.2 2.2 31.2 5.2c10.7 2.8 21.6-3.5 24.5-14.2s-3.5-21.6-14.2-24.5c-6.5-1.7-13.7-3.4-21.1-4.7V216z"/></svg>
+                      </label>
+
+                    </div>
+
+                  </div> -->
+
+                    </div>
+                    <!-- Scroll Point END-->
+
+                  </div>
+                  <!-- Acc List END-->
+
+                  <!-- Date Input -->
+                  <div id="date" class="bg-white bg-opacity-10 w-60 rounded-xl relative">
+                    <!-- <div id="titleDate" class="h-max text-white mx-auto w-max">
+                  <h3 class="h-full font-semibold w-max mx-auto pt-1">Set Date</h3>
+                </div> -->
+                    <!-- <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                  <img src="../img/calendar.svg" alt="" class="w-4">
+                </div> -->
+                    <!-- <div class="flex justify-around items-center"> -->
+                    <div id="titleDate" class="mx-auto w-max text-center text-white pt-1 font-semibold">
+                      <h2>Date</h2>
+                    </div>
+                    <input name="iDate" type="date" id="datepicker" class="mx-auto w-max bg-transparent border-none text-white placeholder-white text-sm rounded-lg focus:ring-blue-500 pl-5 md:pl-10 focus:border-blue-500 block p-2.5 dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Select date" value="<?php echo $history["Date"] ?>">
+                    <style>
+                      /* CSS to hide the datepicker icon */
+                      input[type=" date"]::-webkit-calendar-picker-indicator {
+                        scale: 1.3;
+                        border-radius: 100px;
+                        position: absolute;
+                        background-color: white;
+                        right: 25px;
+                        padding: 5px;
+                      }
+                    </style>
+                    <!-- <script>
+                      var currentDate = new Date();
+                      var year = currentDate.getFullYear();
+                      var month = String(currentDate.getMonth() + 1).padStart(2, '0');
+                      var day = String(currentDate.getDate()).padStart(2, '0');
+                      var formattedDate = `${year}-${month}-${day}`;
+                      document.getElementById('datepicker').value = formattedDate;
+                    </script> -->
+                    <!-- </div> -->
+                  </div>
+                  <!-- Date Input END-->
+
+                </div>
+            </div>
+
+            <!-- Description -->
+            <div id="responsive2" class="md:w-full md:h-full">
+              <div id="description" class="">
+                <textarea name="Description" id="field_desc" cols="50" rows="25" class="w-full max-h-full md:h-96  resize-none pl-5 pt-5 text-white border-none bg-white bg-opacity-10 rounded-2xl placeholder-white" placeholder="description"><?php echo $history["Description"] ?></textarea>
+              </div>
+            </div>
+            <!-- Description END-->
+
+          </div>
+        </div>
+
+        <div id="btn_income" class="grid grid-cols-2 my-2 w-full gap-3 pb-20 relative md:gap-5">
+          <button type="submit" name="cancel" class="w-full active:scale-90 border-white/10 border transition bg-gradient-to-tl to-[#5D6186] from-[#8A98E2]/50 text-white py-3.5 rounded-xl btn hover:border-none">Cancel</button>
+          <button type="submit" name="submit" class="w-full border-white/10 border hover:border-none active:scale-90 transition bg-gradient-to-tr to-[#5D6186] from-[#8A98E2]/50 text-white py-3.5 rounded-xl btn">Save</button>
+        </div>
+
+        </form>
+        <!-- Ending Form -->
+
+
+      </div>
+    </div>
+  </div>
+  <input type="checkbox" id="delete" class="modal-toggle" />
+  <div class="modal">
+    <div class="modal-box w-[25rem] md:w-[50rem] bg-[#2E3462]/70  border border-white border-opacity-20 filter backdrop-blur-lg text-white">
+      <h3 class="font-bold text-lg">Do you sure to Delete your item history ?</h3>
+      <div class="modal-action w-full">
+        <button onclick="location.href='Edit/deleteIncome.php?id=<?php echo $ID ?>'" class="btn bg-blue-600 text-white w-1/2 border-none" data-tippy-content="Press Yes">Yes</button>
+        <label for="delete" class="btn bg-blue-600 text-white w-1/2 border-none" data-tippy-content="Press No">No</label>
+      </div>
+    </div>
+  </div>
+  <!--Tippy JS -->
+  <script src="https://unpkg.com/@popperjs/core@2"></script>
+  <script src="https://unpkg.com/tippy.js@6"></script>
+
+  <!-- JS Native -->
+  <script src="IOTippy.js"></script>
+
+  <!-- aosJS init -->
+  <script>
+    AOS.init();
+  </script>
+
+  <!-- Flowbite -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/1.6.4/flowbite.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/1.6.5/datepicker.min.js"></script>
+</body>
+
+</html>

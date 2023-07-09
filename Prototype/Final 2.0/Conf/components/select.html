@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- icon title -->
+    <link rel="apple-touch-icon" type="image/png" href="../img/iconLogo.svg" />
+    <link
+      rel="apple-touch-icon"
+      type="image/png"
+      sizes="76x76"
+      href="img/iconLogo.svg"
+    />
+    <link
+      rel="apple-touch-icon"
+      type="image/png"
+      sizes="120x120"
+      href="img/iconLogo.svg"
+    />
+    <link
+      rel="apple-touch-icon"
+      type="image/png"
+      sizes="152x152"
+      href="img/iconLogo.svg"
+    />
+    <link
+      rel="apple-touch-icon"
+      type="image/png"
+      href="img/iconLogo.svg"
+      sizes="60x60"
+    />
+    <link rel="icon" type="image/png" href="../img/iconLogo.svg" />
+    <link rel="icon" type="image/png" href="../img/iconLogo.svg" sizes="32x32" />
+    <link rel="icon" type="image/png" href="../img/iconLogo.svg" sizes="192x192" />
+    <link rel="icon" type="image/png" href="../img/iconLogo.svg" sizes="16x16" />
+
+    <!-- aosJS -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet" />
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+
+    <!-- Flowbite -->
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/flowbite/1.6.4/flowbite.min.css"
+      rel="stylesheet"
+    />
+    
+    <!-- daisyUI -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/daisyui@2.50.0/dist/full.css"
+      rel="stylesheet"
+      type="text/css"
+    />
+
+    <!-- tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,typography,aspect-ratio,line-clamp"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {},
+          },
+        },
+      };
+    </script>
+    <!-- 
+    <style type="text/tailwindcss">
+        @layer utilities {
+          .content-auto {
+            content-visibility: auto;
+          }
+        }
+      </style>
+    -->
+
+    <!-- CSS Native -->
+    <link rel="stylesheet" href="select.css">
+    <!-- title -->
+    <title>Fortune - Components, Select Form</title>
+  </head>
+  <body class="">
+    <select class="w-96 block mx-auto px-4 py-2 pr-8 leading-tight bg-white border border-gray-300 rounded-md appearance-none focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+      <option class="custom-option">Option 1</option>
+      <option class="custom-option">Option 2</option>
+      <option class="custom-option">Option 3</option>
+    </select>    
+    <!--Tippy JS -->
+    <script src="https://unpkg.com/@popperjs/core@2"></script>
+    <script src="https://unpkg.com/tippy.js@6"></script>
+
+    <!-- JS Native -->
+    <script src="IOTippy.js"></script>
+
+    <!-- aosJS init -->
+    <script>
+      AOS.init();
+    </script>
+
+    <!-- Flowbite -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/1.6.4/flowbite.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/1.6.5/datepicker.min.js"></script>
+  </body>
+</html>
