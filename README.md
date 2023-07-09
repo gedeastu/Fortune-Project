@@ -12,6 +12,6 @@ Aplikasi ini nanti akan dapat mecatat pengeluaran dan pemasukan user, serta mebe
 
 NIM        | Nama            | Username Github
 -----------|-----------------| ---------------
-6706223062 | IGN Brindawan Tri Guna Yoga | R1N-NY44
-6706223132 | Gede Astu Nugraha | gedeastu
-6706220055 | Kevin Sianturi | kevinsianturii
+6706223062 | IGN Brindawan Tri Guna Yoga ( Back-end & Database ) | R1N-NY44
+6706223132 | Gede Astu Nugraha ( Front-end & UI/UX ) | gedeastu
+6706220055 | Kevin Sianturi ( Designer & Multimedia )| kevinsianturii
